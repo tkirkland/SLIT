@@ -9,7 +9,7 @@ from typing import Any, Dict, Optional
 
 class InstallerError(Exception):
     """Base exception class for installer errors.
-    
+
     Attributes:
         message: Error description
         error_code: Unique error identifier
@@ -17,17 +17,17 @@ class InstallerError(Exception):
         recoverable: Whether error allows recovery
         user_message: User-friendly error description
     """
-    
+
     def __init__(
         self,
         message: str,
         error_code: str,
         context: Optional[Dict[str, Any]] = None,
         recoverable: bool = False,
-        user_message: Optional[str] = None
+        user_message: Optional[str] = None,
     ) -> None:
         """Initialize InstallerError.
-        
+
         Args:
             message: Error description
             error_code: Unique error identifier
@@ -45,23 +45,23 @@ class InstallerError(Exception):
 
 class ValidationError(InstallerError):
     """Configuration validation errors.
-    
+
     Additional attributes:
         field: Field that failed validation
         invalid_value: The invalid value
         expected_format: Description of expected format
     """
-    
+
     def __init__(
         self,
         message: str,
         field: str,
         invalid_value: Any,
         expected_format: str,
-        **kwargs
+        **kwargs,
     ) -> None:
         """Initialize ValidationError.
-        
+
         Args:
             message: Error description
             field: Field that failed validation
@@ -77,7 +77,7 @@ class ValidationError(InstallerError):
 
 class CommandExecutionError(InstallerError):
     """Command execution errors."""
-    
+
     def __init__(
         self,
         message: str,
@@ -85,10 +85,10 @@ class CommandExecutionError(InstallerError):
         exit_code: int,
         stdout: str = "",
         stderr: str = "",
-        **kwargs
+        **kwargs,
     ) -> None:
         """Initialize CommandExecutionError.
-        
+
         Args:
             message: Error description
             command: Command that failed
@@ -106,28 +106,28 @@ class CommandExecutionError(InstallerError):
 
 class HardwareDetectionError(InstallerError):
     """Hardware detection errors."""
-    
+
     def __init__(self, message: str, **kwargs) -> None:
         super().__init__(message, error_code="HARDWARE_DETECTION_ERROR", **kwargs)
 
 
 class NetworkConfigurationError(InstallerError):
     """Network configuration errors."""
-    
+
     def __init__(self, message: str, **kwargs) -> None:
         super().__init__(message, error_code="NETWORK_CONFIGURATION_ERROR", **kwargs)
 
 
 class SystemRequirementsError(InstallerError):
     """System requirements validation errors."""
-    
+
     def __init__(self, message: str, **kwargs) -> None:
         super().__init__(message, error_code="SYSTEM_REQUIREMENTS_ERROR", **kwargs)
 
 
 class InstallationPhaseError(InstallerError):
     """Installation phase execution errors."""
-    
+
     def __init__(self, message: str, phase_number: int, **kwargs) -> None:
         super().__init__(message, error_code="INSTALLATION_PHASE_ERROR", **kwargs)
         self.phase_number = phase_number

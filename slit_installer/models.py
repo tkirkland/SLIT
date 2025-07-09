@@ -12,13 +12,18 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
 from .exceptions import ValidationError
-from .validation import validate_hostname, validate_ip_address, validate_locale, validate_username
+from .validation import (
+    validate_hostname,
+    validate_ip_address,
+    validate_locale,
+    validate_username,
+)
 
 
 @dataclass
 class NetworkConfig:
     """Network configuration settings.
-    
+
     Attributes:
         network_type: "dhcp", "static", or "manual"
         interface: Network interface name
@@ -29,7 +34,7 @@ class NetworkConfig:
         domain_search: Search domains
         dns_suffix: DNS routing domains
     """
-    
+
     network_type: str = "dhcp"
     interface: str = "eth0"
     ip_address: str = ""
@@ -38,87 +43,94 @@ class NetworkConfig:
     dns_servers: str = ""
     domain_search: str = ""
     dns_suffix: str = ""
-    
+
     def validate(self) -> List[ValidationError]:
         """Validate network configuration.
-        
+
         Returns:
             List of validation errors (empty if valid)
         """
         errors = []
-        
+
         if self.network_type not in ("dhcp", "static", "manual"):
-            errors.append(ValidationError(
-                "Invalid network type",
-                "network_type",
-                self.network_type,
-                "dhcp, static, or manual"
-            ))
-        
+            errors.append(
+                ValidationError(
+                    "Invalid network type",
+                    "network_type",
+                    self.network_type,
+                    "dhcp, static, or manual",
+                )
+            )
+
         if self.network_type == "static":
             if not self.ip_address:
-                errors.append(ValidationError(
-                    "IP address required for static configuration",
-                    "ip_address",
-                    self.ip_address,
-                    "Valid IP address"
-                ))
+                errors.append(
+                    ValidationError(
+                        "IP address required for static configuration",
+                        "ip_address",
+                        self.ip_address,
+                        "Valid IP address",
+                    )
+                )
             elif not validate_ip_address(self.ip_address):
-                errors.append(ValidationError(
-                    "Invalid IP address format",
-                    "ip_address",
-                    self.ip_address,
-                    "Valid IP address (e.g., 192.168.1.100)"
-                ))
-            
+                errors.append(
+                    ValidationError(
+                        "Invalid IP address format",
+                        "ip_address",
+                        self.ip_address,
+                        "Valid IP address (e.g., 192.168.1.100)",
+                    )
+                )
+
             if not self.gateway:
-                errors.append(ValidationError(
-                    "Gateway required for static configuration",
-                    "gateway",
-                    self.gateway,
-                    "Valid gateway IP address"
-                ))
+                errors.append(
+                    ValidationError(
+                        "Gateway required for static configuration",
+                        "gateway",
+                        self.gateway,
+                        "Valid gateway IP address",
+                    )
+                )
             elif not validate_ip_address(self.gateway):
-                errors.append(ValidationError(
-                    "Invalid gateway IP address",
-                    "gateway",
-                    self.gateway,
-                    "Valid IP address"
-                ))
-        
+                errors.append(
+                    ValidationError(
+                        "Invalid gateway IP address",
+                        "gateway",
+                        self.gateway,
+                        "Valid IP address",
+                    )
+                )
+
         return errors
-    
+
     def to_systemd_config(self) -> str:
         """Generate systemd-networkd configuration.
-        
+
         Returns:
             systemd-networkd configuration string
         """
-        config_lines = [
-            "[Match]",
-            f"Name={self.interface}",
-            "",
-            "[Network]"
-        ]
-        
+        config_lines = ["[Match]", f"Name={self.interface}", "", "[Network]"]
+
         if self.network_type == "dhcp":
             config_lines.append("DHCP=yes")
         elif self.network_type == "static":
-            config_lines.extend([
-                f"Address={self.ip_address}/{self._netmask_to_cidr()}",
-                f"Gateway={self.gateway}"
-            ])
+            config_lines.extend(
+                [
+                    f"Address={self.ip_address}/{self._netmask_to_cidr()}",
+                    f"Gateway={self.gateway}",
+                ]
+            )
             if self.dns_servers:
                 config_lines.append(f"DNS={self.dns_servers}")
-        
+
         if self.domain_search:
             config_lines.append(f"Domains={self.domain_search}")
-        
+
         return "\n".join(config_lines)
-    
+
     def _netmask_to_cidr(self) -> str:
         """Convert netmask to CIDR notation.
-        
+
         Returns:
             CIDR prefix length
         """
@@ -132,7 +144,7 @@ class NetworkConfig:
             "255.255.255.224": "27",
             "255.255.255.240": "28",
             "255.255.255.248": "29",
-            "255.255.255.252": "30"
+            "255.255.255.252": "30",
         }
         return netmask_map.get(self.netmask, "24")
 
@@ -140,7 +152,7 @@ class NetworkConfig:
 @dataclass
 class SystemConfig:
     """Complete system configuration data structure.
-    
+
     Attributes:
         target_drive: Selected drive path
         locale: System locale
@@ -153,7 +165,7 @@ class SystemConfig:
         user_password: User password (encrypted)
         sudo_nopasswd: Passwordless sudo access
     """
-    
+
     target_drive: str = ""
     locale: str = "en_US.UTF-8"
     timezone: str = "America/New_York"
@@ -164,77 +176,88 @@ class SystemConfig:
     network: NetworkConfig = field(default_factory=NetworkConfig)
     user_password: str = ""
     sudo_nopasswd: bool = False
-    
+
     def validate(self) -> List[ValidationError]:
         """Comprehensive configuration validation.
-        
+
         Returns:
             List of validation errors (empty if valid)
         """
         errors = []
-        
+
         # Validate required fields
         if not self.target_drive:
-            errors.append(ValidationError(
-                "Target drive is required",
-                "target_drive",
-                self.target_drive,
-                "Valid drive path (e.g., /dev/nvme0n1)"
-            ))
+            errors.append(
+                ValidationError(
+                    "Target drive is required",
+                    "target_drive",
+                    self.target_drive,
+                    "Valid drive path (e.g., /dev/nvme0n1)",
+                )
+            )
         elif not self.target_drive.startswith("/dev/"):
-            errors.append(ValidationError(
-                "Invalid drive path format",
-                "target_drive",
-                self.target_drive,
-                "Path starting with /dev/"
-            ))
-        
+            errors.append(
+                ValidationError(
+                    "Invalid drive path format",
+                    "target_drive",
+                    self.target_drive,
+                    "Path starting with /dev/",
+                )
+            )
+
         if not self.username:
-            errors.append(ValidationError(
-                "Username is required",
-                "username",
-                self.username,
-                "Valid Linux username"
-            ))
+            errors.append(
+                ValidationError(
+                    "Username is required",
+                    "username",
+                    self.username,
+                    "Valid Linux username",
+                )
+            )
         elif not validate_username(self.username):
-            errors.append(ValidationError(
-                "Invalid username format",
-                "username",
-                self.username,
-                "Lowercase letters, numbers, underscore, starting with letter"
-            ))
-        
+            errors.append(
+                ValidationError(
+                    "Invalid username format",
+                    "username",
+                    self.username,
+                    "Lowercase letters, numbers, underscore, starting with letter",
+                )
+            )
+
         if not self.hostname:
-            errors.append(ValidationError(
-                "Hostname is required",
-                "hostname",
-                self.hostname,
-                "Valid hostname"
-            ))
+            errors.append(
+                ValidationError(
+                    "Hostname is required", "hostname", self.hostname, "Valid hostname"
+                )
+            )
         elif not validate_hostname(self.hostname):
-            errors.append(ValidationError(
-                "Invalid hostname format",
-                "hostname",
-                self.hostname,
-                "Letters, numbers, hyphens, no spaces"
-            ))
-        
+            errors.append(
+                ValidationError(
+                    "Invalid hostname format",
+                    "hostname",
+                    self.hostname,
+                    "Letters, numbers, hyphens, no spaces",
+                )
+            )
+
         if not validate_locale(self.locale):
-            errors.append(ValidationError(
-                "Invalid locale format",
-                "locale",
-                self.locale,
-                "Format: xx_XX.UTF-8"
-            ))
-        
+            errors.append(
+                ValidationError(
+                    "Invalid locale format",
+                    "locale",
+                    self.locale,
+                    "Format: xx_XX.UTF-8",
+                )
+            )
+
         # Validate network configuration
         errors.extend(self.network.validate())
-        
+
         return errors
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Serialize configuration to dictionary.
-        
+
         Returns:
             Dictionary representation of configuration
         """
@@ -259,14 +282,14 @@ class SystemConfig:
             "user_password": self.user_password,
             "sudo_nopasswd": self.sudo_nopasswd,
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> SystemConfig:
         """Deserialize configuration from dictionary.
-        
+
         Args:
             data: Dictionary containing configuration data
-            
+
         Returns:
             SystemConfig instance
         """
@@ -281,7 +304,7 @@ class SystemConfig:
             domain_search=network_data.get("domain_search", ""),
             dns_suffix=network_data.get("dns_suffix", ""),
         )
-        
+
         return cls(
             target_drive=data.get("target_drive", ""),
             locale=data.get("locale", "en_US.UTF-8"),
@@ -294,43 +317,43 @@ class SystemConfig:
             user_password=data.get("user_password", ""),
             sudo_nopasswd=data.get("sudo_nopasswd", False),
         )
-    
+
     def save_to_file(self, file_path: str) -> None:
         """Save configuration to file.
-        
+
         Args:
             file_path: Path to save configuration file
         """
-        with open(file_path, 'w', encoding='utf-8') as f:
+        with open(file_path, "w", encoding="utf-8") as f:
             json.dump(self.to_dict(), f, indent=2)
-        
+
         # Set appropriate file permissions (600)
         os.chmod(file_path, 0o600)
-    
+
     @classmethod
     def load_from_file(cls, file_path: str) -> SystemConfig:
         """Load configuration from file.
-        
+
         Args:
             file_path: Path to configuration file
-            
+
         Returns:
             SystemConfig instance
-            
+
         Raises:
             FileNotFoundError: If file doesn't exist
             json.JSONDecodeError: If file contains invalid JSON
         """
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-        
+
         return cls.from_dict(data)
 
 
 @dataclass
 class Drive:
     """Represents a storage drive.
-    
+
     Attributes:
         path: Device path (e.g., "/dev/nvme0n1")
         size_gb: Drive size in gigabytes
@@ -340,7 +363,7 @@ class Drive:
         partitions: List of partition information
         health_status: Drive health information
     """
-    
+
     path: str
     size_gb: int
     model: str
@@ -348,25 +371,25 @@ class Drive:
     has_windows: bool = False
     partitions: List[str] = field(default_factory=list)
     health_status: str = "unknown"
-    
+
     def is_suitable_for_installation(self) -> bool:
         """Check if drive is suitable for installation.
-        
+
         Returns:
             True if drive is suitable for installation
         """
         # Basic suitability checks
         if self.is_removable:
             return False
-        
+
         if self.size_gb < 20:  # Minimum 20GB
             return False
-        
+
         return True
-    
+
     def __str__(self) -> str:
         """Human-readable representation of drive.
-        
+
         Returns:
             String representation of drive
         """
@@ -375,7 +398,7 @@ class Drive:
             status.append("Windows detected")
         if self.is_removable:
             status.append("Removable")
-        
+
         status_str = f" ({', '.join(status)})" if status else ""
         return f"{self.path}: {self.model} - {self.size_gb}GB{status_str}"
 
@@ -383,7 +406,7 @@ class Drive:
 @dataclass
 class WindowsDetectionResult:
     """Result of Windows detection on a drive.
-    
+
     Attributes:
         has_windows: Windows detected
         confidence_level: "high", "medium", "low"
@@ -391,7 +414,7 @@ class WindowsDetectionResult:
         windows_version: Detected Windows version
         boot_entries: Related EFI boot entries
     """
-    
+
     has_windows: bool
     confidence_level: str
     detection_methods: List[str] = field(default_factory=list)
@@ -402,7 +425,7 @@ class WindowsDetectionResult:
 @dataclass
 class EfiEntry:
     """Represents an EFI boot entry.
-    
+
     Attributes:
         boot_id: EFI boot ID (e.g., "0006")
         name: Entry name
@@ -411,17 +434,17 @@ class EfiEntry:
         is_windows: Windows-related entry
         is_slit: SLIT-related entry
     """
-    
+
     boot_id: str
     name: str
     device_path: str
     drive_path: str = ""
     is_windows: bool = False
     is_slit: bool = False
-    
+
     def __str__(self) -> str:
         """String representation of EFI entry.
-        
+
         Returns:
             Human-readable EFI entry description
         """
