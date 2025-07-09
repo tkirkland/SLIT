@@ -34,38 +34,45 @@ This project provides a robust, automated installation system for KDE Neon with 
 
 ```bash
 # Run with dry-run mode (recommended first run)
-sudo ./kde_neon_installer.sh --dry-run
+sudo python main.py --dry-run
 
 # Run actual installation with custom log path
-sudo ./kde_neon_installer.sh --log-path /var/log/kde-install.log
+sudo python main.py --log-path /var/log/kde-install.log
 
 # Use custom configuration file
-sudo ./kde_neon_installer.sh --config /path/to/install.conf
+sudo python main.py --config /path/to/install.conf
 ```
 
 ## Project Structure
 
 ```
-kde_script_install/
+SLIT/
 ├── README.md                 # This file
 ├── CLAUDE.md                 # Project documentation and requirements
-├── kde_neon_installer.sh     # Main installer script
-├── install.conf             # Configuration file
+├── main.py                   # Main installer entry point
+├── pyproject.toml           # Python project configuration
+├── slit_installer/          # Core installer package
+│   ├── __init__.py
+│   ├── command.py           # Command-line interface
+│   ├── exceptions.py        # Custom exceptions
+│   ├── logging.py           # Logging system
+│   ├── models.py            # Data models
+│   └── validation.py        # Input validation
 ├── logs/                    # Installation logs directory
-│   └── kde-install-*.log    # Timestamped installation logs
-└── .gitignore              # Git ignore rules
+│   └── slit-install-*.log   # Timestamped installation logs
+└── uv.lock                  # Dependency lock file
 ```
 
 ## Components
 
 ### Core Scripts
 
-#### `kde_neon_installer.sh`
-Main installer script that provides automated KDE Neon installation with comprehensive safety checks.
+#### `main.py`
+Main installer entry point that provides automated KDE Neon installation with comprehensive safety checks.
 
 **Usage:**
 ```bash
-sudo ./kde_neon_installer.sh [options]
+sudo python main.py [options]
 ```
 
 **Features:**
@@ -162,7 +169,7 @@ The installer includes comprehensive validation for configuration files:
 
 ### Command Line Options
 ```bash
-Usage: kde_neon_installer.sh [options]
+Usage: python main.py [options]
 
 Options:
   --dry-run              Test mode - show what would be done
@@ -209,14 +216,14 @@ Options:
 ### Testing
 ```bash
 # Test installer in dry-run mode
-sudo ./kde_neon_installer.sh --dry-run
+sudo python main.py --dry-run
 
 # Test with custom configuration
-sudo ./kde_neon_installer.sh --config test_install.conf --dry-run
+sudo python main.py --config test_install.conf --dry-run
 
 # Test with verbose logging
 export DEBUG=1
-sudo ./kde_neon_installer.sh --dry-run
+sudo python main.py --dry-run
 ```
 
 ### Architecture
@@ -242,9 +249,9 @@ See [CLAUDE.md](CLAUDE.md) for detailed implementation tasks and future developm
 ### Common Issues
 
 **Installer fails with "command not found"**
-- Ensure kde_neon_installer.sh has execute permissions
+- Ensure Python 3.8+ is installed
 - Verify running from correct directory
-- Check bash version compatibility
+- Check Python and required dependencies are available
 
 **Installer fails drive detection**
 - Confirm NVMe drives are present
@@ -260,7 +267,7 @@ See [CLAUDE.md](CLAUDE.md) for detailed implementation tasks and future developm
 Enable verbose logging:
 ```bash
 export DEBUG=1
-sudo ./kde_neon_installer.sh --dry-run
+sudo python main.py --dry-run
 ```
 
 ### Log Analysis
