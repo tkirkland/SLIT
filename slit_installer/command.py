@@ -53,7 +53,7 @@ class CommandExecutor:
             command: Command as string or list
 
         Returns:
-            Command as list of strings
+            Command as a list of strings
         """
         if isinstance(command, str):
             return command.split()
@@ -71,7 +71,7 @@ class CommandExecutor:
         """Prepare subprocess arguments.
 
         Args:
-            cmd_list: Command as list of strings
+            cmd_list: Command as a list of strings
             capture_output: Whether to capture output
             timeout: Command timeout
             cwd: Working directory
@@ -96,7 +96,7 @@ class CommandExecutor:
         """Handle dry run execution.
 
         Args:
-            cmd_list: Command as list of strings
+            cmd_list: Command as a list of strings
 
         Returns:
             CommandResult for dry run
@@ -114,7 +114,7 @@ class CommandExecutor:
     def _create_result(
         subprocess_result: subprocess.CompletedProcess, duration: float
     ) -> CommandResult:
-        """Create CommandResult from subprocess result.
+        """Create CommandResult from a subprocess result.
 
         Args:
             subprocess_result: Completed subprocess result
@@ -160,7 +160,7 @@ class CommandExecutor:
 
         Args:
             e: Timeout exception
-            cmd_list: Command as list of strings
+            cmd_list: Command as a list of strings
             description: Command description
             timeout: Timeout value
             duration: Execution duration
@@ -203,7 +203,7 @@ class CommandExecutor:
 
         Args:
             e: Exception that occurred
-            cmd_list: Command as list of strings
+            cmd_list: Command as a list of strings
             description: Command description
             duration: Execution duration
             check_success: Whether to raise on error

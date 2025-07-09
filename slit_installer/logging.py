@@ -5,7 +5,6 @@ automatic log rotation, and multi-level filtering as specified in the utility fu
 """
 
 import logging
-import os
 import time
 from datetime import datetime
 from pathlib import Path
@@ -38,7 +37,7 @@ def initialize_logging(
     if _logger_initialized:
         return
 
-    # Create log directory
+    # Create a log directory
     if log_dir:
         log_directory = Path(log_dir)
     else:
@@ -53,7 +52,7 @@ def initialize_logging(
     else:
         log_file = Path(log_file)
 
-    # Set up root logger
+    # Set up the root logger
     root_logger = logging.getLogger()
     root_logger.setLevel(getattr(logging, level.upper()))
 
@@ -144,7 +143,7 @@ def log(level: str, message: str, context: Optional[Dict[str, Any]] = None) -> N
     else:
         formatted_message = message
 
-    # Log at appropriate level
+    # Log at the appropriate level
     log_level = getattr(logging, level.upper(), logging.INFO)
     logger.log(log_level, formatted_message)
 
@@ -190,7 +189,7 @@ def log_error(message: str, context: Optional[Dict[str, Any]] = None) -> None:
 
 
 def set_log_level(level: str) -> None:
-    """Set logging level for all handlers.
+    """Set a logging level for all handlers.
 
     Args:
         level: New logging level (DEBUG, INFO, WARN, ERROR)
@@ -207,10 +206,10 @@ def set_log_level(level: str) -> None:
 
 
 def get_log_file_path() -> Optional[Path]:
-    """Get current log file path.
+    """Get the current log file path.
 
     Returns:
-        Path to current log file or None if not initialized
+        Path to the current log file or None if not initialized
     """
     if "file" not in _log_handlers:
         return None
@@ -239,7 +238,7 @@ class LogContext:
 
         def record_factory(*args, **kwargs):
             record = self.old_factory(*args, **kwargs)
-            # Add context to record
+            # Add context to a record
             for key, value in self.context.items():
                 setattr(record, key, value)
             return record

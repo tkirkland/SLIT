@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 import os
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
 from .exceptions import ValidationError
 from .validation import (
@@ -134,7 +134,7 @@ class NetworkConfig:
         Returns:
             CIDR prefix length
         """
-        # Simple conversion for common netmasks
+        # Simple conversion for a common netmask
         netmask_map = {
             "255.255.255.0": "24",
             "255.255.0.0": "16",
@@ -285,7 +285,7 @@ class SystemConfig:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> SystemConfig:
-        """Deserialize configuration from dictionary.
+        """Deserialize configuration from a dictionary.
 
         Args:
             data: Dictionary containing configuration data
@@ -322,7 +322,7 @@ class SystemConfig:
         """Save configuration to file.
 
         Args:
-            file_path: Path to save configuration file
+            file_path: Path to save a configuration file
         """
         with open(file_path, "w", encoding="utf-8") as f:
             json.dump(self.to_dict(), f, indent=2)
@@ -332,17 +332,17 @@ class SystemConfig:
 
     @classmethod
     def load_from_file(cls, file_path: str) -> SystemConfig:
-        """Load configuration from file.
+        """Load configuration from a file.
 
         Args:
-            file_path: Path to configuration file
+            file_path: Path to a configuration file
 
         Returns:
             SystemConfig instance
 
         Raises:
-            FileNotFoundError: If file doesn't exist
-            json.JSONDecodeError: If file contains invalid JSON
+            FileNotFoundError: If a file doesn't exist
+            json.JSONDecodeError: If a file contains invalid JSON
         """
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -373,10 +373,10 @@ class Drive:
     health_status: str = "unknown"
 
     def is_suitable_for_installation(self) -> bool:
-        """Check if drive is suitable for installation.
+        """Check if the drive is suitable for installation.
 
         Returns:
-            True if drive is suitable for installation
+            True if the drive is suitable for installation
         """
         # Basic suitability checks
         if self.is_removable:

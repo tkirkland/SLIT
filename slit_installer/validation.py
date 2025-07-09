@@ -1,21 +1,20 @@
 """Input validation functions for the SLIT installer.
 
-This module provides comprehensive validation functions for various input types
+This module provides comprehensive validation functions for various input types,
 including IP addresses, usernames, hostnames, and locales.
 """
 
 import re
-from typing import Optional
 
 
 def validate_ip_address(ip_string: str) -> bool:
-    """Validate IP address format.
+    """Validate an IP address format.
 
     Args:
         ip_string: IP address to validate
 
     Returns:
-        True if IP address is valid, False otherwise
+        True if the IP address is valid, False otherwise
     """
     if not ip_string:
         return False
@@ -52,7 +51,7 @@ def validate_username(username: str) -> bool:
         username: Username to validate
 
     Returns:
-        True if username is valid, False otherwise
+        True if the username is valid, False otherwise
     """
     if not username:
         return False
@@ -61,7 +60,7 @@ def validate_username(username: str) -> bool:
     if not (1 <= len(username) <= 32):
         return False
 
-    # Must start with letter or underscore
+    # Must start with a letter or underscore
     if not (username[0].isalpha() or username[0] == "_"):
         return False
 
@@ -123,8 +122,8 @@ def validate_username(username: str) -> bool:
         "qemu",
         "kvm",
         "render",
-        "pipewire",
-        "rtkit",
+        "pipe wire",
+        "octokit",
         "test",
         "guest",
         "admin",
@@ -146,7 +145,7 @@ def validate_hostname(hostname: str) -> bool:
         hostname: Hostname to validate
 
     Returns:
-        True if hostname is valid, False otherwise
+        True if the hostname is valid, False otherwise
     """
     if not hostname:
         return False
@@ -250,9 +249,8 @@ def validate_locale(locale_string: str) -> bool:
         "gv_GB.UTF-8",
     }
 
-    # For now, accept any properly formatted locale
-    # In a real implementation, you might check against system availability
-    return True
+    # Check against known valid locales
+    return locale_string in valid_locales
 
 
 def validate_timezone(timezone_string: str) -> bool:
@@ -340,19 +338,18 @@ def validate_timezone(timezone_string: str) -> bool:
         "Africa/Algiers",
     }
 
-    # For now, accept any properly formatted timezone
-    # In a real implementation, you might check against system availability
-    return True
+    # Check against known valid timezones
+    return timezone_string in valid_timezones
 
 
 def validate_drive_path(drive_path: str) -> bool:
-    """Validate storage drive path.
+    """Validate a storage drive path.
 
     Args:
         drive_path: Drive path to validate
 
     Returns:
-        True if drive path is valid, False otherwise
+        True if a drive path is valid, False otherwise
     """
     if not drive_path:
         return False
@@ -361,15 +358,10 @@ def validate_drive_path(drive_path: str) -> bool:
     if not drive_path.startswith("/dev/"):
         return False
 
-    # Common drive patterns
+    # Internal drive patterns only (no removable/virtual devices)
     valid_patterns = [
-        r"^/dev/sd[a-z]$",  # SATA drives (sda, sdb, etc.)
-        r"^/dev/hd[a-z]$",  # IDE drives (hda, hdb, etc.)
+        r"^/dev/sd[a-z]$",  # SATA/SCSI drives (sda, sdb, etc.)
         r"^/dev/nvme\d+n\d+$",  # NVMe drives (nvme0n1, nvme1n1, etc.)
-        r"^/dev/mmcblk\d+$",  # MMC/SD cards (mmcblk0, mmcblk1, etc.)
-        r"^/dev/loop\d+$",  # Loop devices (loop0, loop1, etc.)
-        r"^/dev/md\d+$",  # RAID devices (md0, md1, etc.)
-        r"^/dev/dm-\d+$",  # Device mapper (dm-0, dm-1, etc.)
     ]
 
     return any(re.match(pattern, drive_path) for pattern in valid_patterns)
