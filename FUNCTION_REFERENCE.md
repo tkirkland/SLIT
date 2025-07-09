@@ -27,8 +27,9 @@ Base exception class for all installer errors.
 - `user_message: Optional[str] = None` - User-friendly error description
 
 **Example:**
+
 ```python
-from slit_installer.exceptions import InstallerError
+from helpers.exceptions import InstallerError
 
 try:
     # Some installer operation
@@ -57,8 +58,9 @@ Configuration validation specific errors.
 - `**kwargs` - Additional InstallerError arguments
 
 **Example:**
+
 ```python
-from slit_installer.exceptions import ValidationError
+from helpers.exceptions import ValidationError
 
 error = ValidationError(
     "Invalid IP address format",
@@ -83,8 +85,9 @@ Network configuration settings management.
 **Description:** Validates network configuration settings
 
 **Example:**
+
 ```python
-from slit_installer.models import NetworkConfig
+from helpers.models import NetworkConfig
 
 config = NetworkConfig(
     network_type="static",
@@ -133,8 +136,9 @@ Complete system configuration management.
 **Description:** Comprehensive configuration validation
 
 **Example:**
+
 ```python
-from slit_installer.models import SystemConfig, NetworkConfig
+from helpers.models import SystemConfig, NetworkConfig
 
 config = SystemConfig(
     target_drive="/dev/nvme0n1",
@@ -176,8 +180,9 @@ Storage drive representation and validation.
 **Description:** Checks if drive is suitable for installation
 
 **Example:**
+
 ```python
-from slit_installer.models import Drive
+from helpers.models import Drive
 
 drive = Drive(
     path="/dev/nvme0n1",
@@ -204,57 +209,62 @@ All validation functions return `bool` (True if valid, False if invalid).
 ### validate_ip_address(ip_string: str)
 
 **Example:**
+
 ```python
-from slit_installer.validation import validate_ip_address
+from helpers.validation import validate_ip_address
 
 print(validate_ip_address("192.168.1.100"))  # True
 print(validate_ip_address("192.168.1.999"))  # False
-print(validate_ip_address("10.0.0.1"))       # True
+print(validate_ip_address("10.0.0.1"))  # True
 ```
 
 ### validate_username(username: str)
 
 **Example:**
-```python
-from slit_installer.validation import validate_username
 
-print(validate_username("john"))      # True
-print(validate_username("john123"))   # True
-print(validate_username("123john"))   # False (can't start with number)
-print(validate_username("root"))      # False (reserved name)
+```python
+from helpers.validation import validate_username
+
+print(validate_username("john"))  # True
+print(validate_username("john123"))  # True
+print(validate_username("123john"))  # False (can't start with number)
+print(validate_username("root"))  # False (reserved name)
 ```
 
 ### validate_hostname(hostname: str)
 
 **Example:**
-```python
-from slit_installer.validation import validate_hostname
 
-print(validate_hostname("my-computer"))    # True
-print(validate_hostname("server01"))       # True
-print(validate_hostname("-invalid"))       # False (starts with hyphen)
-print(validate_hostname("computer.local")) # True
+```python
+from helpers.validation import validate_hostname
+
+print(validate_hostname("my-computer"))  # True
+print(validate_hostname("server01"))  # True
+print(validate_hostname("-invalid"))  # False (starts with hyphen)
+print(validate_hostname("computer.local"))  # True
 ```
 
 ### validate_drive_path(drive_path: str)
 
 **Example:**
+
 ```python
-from slit_installer.validation import validate_drive_path
+from helpers.validation import validate_drive_path
 
 print(validate_drive_path("/dev/nvme0n1"))  # True
-print(validate_drive_path("/dev/sda"))      # True
-print(validate_drive_path("/home/user"))    # False
+print(validate_drive_path("/dev/sda"))  # True
+print(validate_drive_path("/home/user"))  # False
 ```
 
 ### validate_swap_size(swap_size: str)
 
 **Example:**
+
 ```python
-from slit_installer.validation import validate_swap_size
+from helpers.validation import validate_swap_size
 
 print(validate_swap_size("auto"))  # True
-print(validate_swap_size("2G"))    # True
+print(validate_swap_size("2G"))  # True
 print(validate_swap_size("512M"))  # True
 print(validate_swap_size("1024"))  # True (bytes)
 print(validate_swap_size("huge"))  # False
@@ -279,8 +289,9 @@ print(validate_swap_size("huge"))  # False
 **Returns:** `CommandResult`
 
 **Example:**
+
 ```python
-from slit_installer.command import execute_command, set_dry_run_mode
+from helpers.command import execute_command, set_dry_run_mode
 
 # Enable dry run mode for testing
 set_dry_run_mode(True)
@@ -313,12 +324,15 @@ except CommandExecutionError as e:
 ### execute_command_with_progress()
 
 **Example:**
+
 ```python
-from slit_installer.command import execute_command_with_progress
+from helpers.command import execute_command_with_progress
+
 
 def progress_callback(current, total, description):
     percentage = (current / total) * 100
     print(f"Progress: {percentage:.1f}% - {description}")
+
 
 result = execute_command_with_progress(
     "apt update",
@@ -330,8 +344,9 @@ result = execute_command_with_progress(
 ### CommandExecutor Class
 
 **Example:**
+
 ```python
-from slit_installer.command import CommandExecutor
+from helpers.command import CommandExecutor
 
 # Create executor with dry run enabled
 executor = CommandExecutor(dry_run=True)
@@ -363,8 +378,9 @@ result = executor.execute_command_with_progress(
 - `log_dir: Optional[str] = None` - Directory for log files
 
 **Example:**
+
 ```python
-from slit_installer.logging import initialize_logging, get_logger
+from helpers.logging import initialize_logging, get_logger
 
 # Initialize logging system
 initialize_logging(
@@ -381,8 +397,9 @@ logger.info("Logging system initialized")
 ### Logging Functions
 
 **Example:**
+
 ```python
-from slit_installer.logging import log_info, log_error, log_debug, log_warning
+from helpers.logging import log_info, log_error, log_debug, log_warning
 
 # Simple logging
 log_info("Starting installation process")
@@ -405,8 +422,9 @@ log_warning("Windows installation detected", context={
 ### LogContext Class
 
 **Example:**
+
 ```python
-from slit_installer.logging import LogContext, get_logger
+from helpers.logging import LogContext, get_logger
 
 logger = get_logger(__name__)
 
@@ -428,29 +446,30 @@ with LogContext({"installation_phase": "partitioning", "drive": "/dev/nvme0n1"})
 #!/usr/bin/env python3
 """Example SLIT installer workflow."""
 
-from slit_installer.logging import initialize_logging, get_logger
-from slit_installer.models import SystemConfig, NetworkConfig
-from slit_installer.command import set_dry_run_mode, execute_command
-from slit_installer.validation import validate_drive_path
-from slit_installer.exceptions import ValidationError, CommandExecutionError
+from helpers.logging import initialize_logging, get_logger
+from helpers.models import SystemConfig, NetworkConfig
+from helpers.command import set_dry_run_mode, execute_command
+from helpers.validation import validate_drive_path
+from helpers.exceptions import ValidationError, CommandExecutionError
+
 
 def main():
     # Initialize logging
     initialize_logging(level='INFO', console_output=True)
     logger = get_logger(__name__)
-    
+
     # Enable dry run for testing
     set_dry_run_mode(True)
-    
+
     logger.info("Starting SLIT installation process")
-    
+
     try:
         # Create system configuration
         network = NetworkConfig(
             network_type="dhcp",
             interface="enp0s3"
         )
-        
+
         config = SystemConfig(
             target_drive="/dev/nvme0n1",
             locale="en_US.UTF-8",
@@ -459,7 +478,7 @@ def main():
             hostname="slit-workstation",
             network=network
         )
-        
+
         # Validate configuration
         logger.info("Validating configuration...")
         errors = config.validate()
@@ -467,25 +486,26 @@ def main():
             for error in errors:
                 logger.error(f"Validation error: {error.message}")
             return 1
-        
+
         # Validate drive path specifically
         if not validate_drive_path(config.target_drive):
             logger.error(f"Invalid drive path: {config.target_drive}")
             return 1
-        
+
         logger.info("Configuration validation passed")
-        
+
         # Save configuration
         config.save_to_file("slit_install.conf")
         logger.info("Configuration saved to slit_install.conf")
-        
+
         # Example installation commands
         commands = [
             ("lsblk", "List available drives"),
             ("sudo fdisk -l", "Show partition tables"),
-            (f"sudo parted {config.target_drive} mklabel gpt", "Create GPT partition table"),
+            (f"sudo parted {config.target_drive} mklabel gpt",
+             "Create GPT partition table"),
         ]
-        
+
         for cmd, desc in commands:
             try:
                 result = execute_command(cmd, desc)
@@ -493,13 +513,14 @@ def main():
             except CommandExecutionError as e:
                 logger.error(f"Command failed: {desc} - {e.message}")
                 return 1
-        
+
         logger.info("Installation completed successfully")
         return 0
-        
+
     except Exception as e:
         logger.error(f"Installation failed: {e}")
         return 1
+
 
 if __name__ == "__main__":
     exit(main())
@@ -510,21 +531,23 @@ if __name__ == "__main__":
 ```python
 """Example configuration management."""
 
-from slit_installer.models import SystemConfig, NetworkConfig
-from slit_installer.exceptions import ValidationError
+from helpers.models import SystemConfig, NetworkConfig
+from helpers.exceptions import ValidationError
+
 
 def create_default_config():
     """Create a default system configuration."""
     network = NetworkConfig(network_type="dhcp")
-    
+
     config = SystemConfig(
         target_drive="/dev/nvme0n1",
         username="user",
         hostname="slit-system",
         network=network
     )
-    
+
     return config
+
 
 def validate_and_save_config(config, filename):
     """Validate and save configuration."""
@@ -534,10 +557,11 @@ def validate_and_save_config(config, filename):
         for error in errors:
             print(f"  - {error.field}: {error.message}")
         return False
-    
+
     config.save_to_file(filename)
     print(f"Configuration saved to {filename}")
     return True
+
 
 # Usage
 config = create_default_config()
@@ -550,55 +574,56 @@ if validate_and_save_config(config, "default.conf"):
 ```python
 """Example error handling patterns."""
 
-from slit_installer.exceptions import (
-    ValidationError, CommandExecutionError, 
+from helpers.exceptions import (
+    ValidationError, CommandExecutionError,
     HardwareDetectionError, InstallerError
 )
-from slit_installer.command import execute_command
-from slit_installer.logging import get_logger
+from helpers.command import execute_command
+from helpers.logging import get_logger
 
 logger = get_logger(__name__)
+
 
 def handle_installation_errors():
     """Demonstrate error handling patterns."""
     try:
         # This might raise various exceptions
         result = execute_command("some_command", "Example operation")
-        
+
     except ValidationError as e:
         logger.error(f"Validation failed for {e.field}: {e.message}")
         logger.info(f"Expected format: {e.expected_format}")
         return False
-        
+
     except CommandExecutionError as e:
         logger.error(f"Command execution failed: {e.command}")
         logger.error(f"Exit code: {e.exit_code}")
         logger.error(f"Error output: {e.stderr}")
-        
+
         if e.recoverable:
             logger.info("Error is recoverable, attempting retry...")
             # Implement retry logic
         return False
-        
+
     except HardwareDetectionError as e:
         logger.error(f"Hardware detection failed: {e.message}")
         # Implement hardware detection fallback
         return False
-        
+
     except InstallerError as e:
         logger.error(f"General installer error: {e.message}")
         logger.error(f"Error code: {e.error_code}")
         logger.error(f"Context: {e.context}")
-        
+
         if e.user_message:
             print(f"User message: {e.user_message}")
-        
+
         return False
-        
+
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
         return False
-    
+
     return True
 ```
 

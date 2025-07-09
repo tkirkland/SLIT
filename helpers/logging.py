@@ -134,7 +134,7 @@ def log(level: str, message: str, context: Optional[Dict[str, Any]] = None) -> N
         message: Log message
         context: Additional context data
     """
-    logger = get_logger("slit_installer")
+    logger = get_logger("helpers")
 
     # Format message with context
     if context:
