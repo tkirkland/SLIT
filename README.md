@@ -1,6 +1,8 @@
-# KDE Neon Automated Installer
+# SLIT - Secure Linux Installation Tool
 
-A comprehensive command-line installer for KDE Neon systems with extensive hardware detection, dual-boot safety, and configuration management.
+🚧 **Work in Progress** 🚧
+
+A comprehensive KDE Neon automated installer with advanced safety features, configuration management, and dual-boot protection.
 
 ## Overview
 
