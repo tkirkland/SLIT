@@ -2,24 +2,48 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Required Reading for Context
+
+**IMPORTANT**: Before working on any tasks, read these essential documentation files to understand the project structure and requirements:
+
+1. **[README.md](README.md)** - Project overview, features, usage examples, and project structure
+2. **[STYLE.md](STYLE.md)** - Google Python Style Guide compliance and code formatting standards
+3. **[FUNCTION_REFERENCE.md](FUNCTION_REFERENCE.md)** - Complete reference for all existing functions, classes, and usage examples
+4. **[UTILITY_FUNCTIONS.md](UTILITY_FUNCTIONS.md)** - Comprehensive specification for all utility functions and classes needed for implementation
+
+These files contain critical information about:
+- Project architecture and design patterns
+- Existing code structure and helper modules
+- Style guidelines and best practices
+- Function signatures and implementation requirements
+- TODO items and future development priorities
+
 ## Project Overview
 
-This is a KDE Neon automated installer project featuring a comprehensive command-line installation system with advanced safety features, configuration management, and dual-boot protection.
+This is the **SLIT (Secure Linux Installation Tool)** project - a comprehensive automated installer system with advanced safety features, configuration management, and dual-boot protection. The project includes both shell script and Python implementations.
 
 ## Development Environment
 
-- **Target System**: KDE Neon live environment
+- **Target System**: Linux live environments (KDE Neon, Ubuntu, etc.)
 - **Hardware**: UEFI systems with NVMe storage
 - **Dependencies**: Standard Linux utilities, GRUB, systemd-networkd
+- **Python Version**: 3.8+ with type hints and modern features
 
 ## Project Architecture
 
-This KDE Neon installer provides automated installation with extensive validation, configuration persistence, and safety mechanisms.
+SLIT provides automated installation with extensive validation, configuration persistence, and safety mechanisms through a 5-phase installation process.
 
 ### Core Components
 
-- **kde_neon_installer.sh**: Main installer script with 5-phase installation process
+**Shell Implementation:**
+- **kde_neon_installer.sh**: Original shell script with complete 5-phase installation process
 - **install.conf**: Configuration persistence file with comprehensive validation
+
+**Python Implementation:**
+- **installer.py**: Main Python installer with `SlitInstaller` class and phase-based architecture
+- **helpers/**: Python package with command execution, logging, models, validation, and exceptions
+
+**Common:**
 - **logs/**: Timestamped installation logs for debugging and analysis
 
 ### Installation Process
@@ -142,6 +166,51 @@ The installer includes robust validation for configuration files:
 - Performance optimization for large operations
 - Memory usage monitoring during installation
 
+## Python Implementation Status
+
+### ✅ Completed Python Features
+
+**Core Architecture:**
+- `SlitInstaller` class with 5-phase orchestration
+- `InstallationPhase` base class with common functionality
+- All 5 phase classes implemented with stub methods
+- Comprehensive dry-run support throughout
+- Integration with existing `helpers/` modules
+
+**Phase Structure:**
+- `SystemPreparationPhase`: UEFI checks, network validation, package installation
+- `PartitioningPhase`: GPT partitioning, EFI/root partition creation, formatting
+- `SystemInstallationPhase`: Filesystem mounting, system file copying, swap creation
+- `BootloaderConfigurationPhase`: Enhanced chroot setup, GRUB installation, fstab
+- `SystemConfigurationPhase`: Locale/timezone, network, user creation, cleanup
+
+**Enhanced Features:**
+- Proper chroot environment with `/dev/pts`, tmpfs `/tmp`, EFI variables binding
+- Type hints and comprehensive docstrings following Google Python Style Guide
+- Error handling and logging integration
+- TODO markers for all unimplemented functionality
+
+### 🚧 Python TODO Items
+
+**High Priority:**
+- Implement squashfs detection and system file copying
+- Add drive enumeration and Windows detection for dual-boot safety
+- Implement configuration file loading and interactive prompts
+- Add partition UUID detection and proper fstab generation
+- Implement locale/timezone configuration and user account creation
+
+**Medium Priority:**
+- Add EFI boot entry cleanup functionality
+- Implement systemd-networkd configuration for all network types
+- Add kernel file installation from casper directory
+- Implement package cleanup (remove live system packages)
+- Add addon script execution support
+
+**Future Enhancements:**
+- Command-line argument parsing
+- Progress reporting and GUI integration
+- Enhanced error recovery and rollback capabilities
+
 ## Common Development Tasks
 
 ### Testing Configuration Validation
@@ -156,6 +225,8 @@ sudo ./kde_neon_installer.sh --dry-run
 ```
 
 ### Running Installation Tests
+
+**Shell Script:**
 ```bash
 # Full dry-run test
 sudo ./kde_neon_installer.sh --dry-run
@@ -168,7 +239,21 @@ sudo ./kde_neon_installer.sh --dry-run
 # Choose "edit" when prompted
 ```
 
+**Python Implementation:**
+```bash
+# Test Python installer scaffold
+python installer.py
+
+# Run with custom configuration (when implemented)
+# python installer.py --config test.conf --dry-run
+
+# Test individual phases (when implemented)
+# python -c "from installer import SystemPreparationPhase; ..."
+```
+
 ### Debugging
+
+**Shell Script:**
 ```bash
 # Enable debug logging
 export DEBUG=1
@@ -176,6 +261,15 @@ sudo ./kde_neon_installer.sh --dry-run
 
 # Check validation logs
 tail -f logs/kde-install-*.log | grep -E "(ERROR|WARN|Config validation)"
+```
+
+**Python Implementation:**
+```bash
+# Enable debug logging
+python installer.py  # Uses INFO level by default
+
+# Test with different log levels (when implemented)
+# python installer.py --log-level DEBUG
 ```
 
 ## Implementation Notes
