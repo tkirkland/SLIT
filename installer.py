@@ -15,7 +15,6 @@ from abc import ABC, abstractmethod
 from typing import List  # TODO: Add Optional back when needed
 
 from helpers.command import CommandExecutor
-
 # TODO: Add back when implementing proper error handling
 # from helpers.exceptions import InstallerError, ValidationError
 from helpers.logging import get_logger, initialize_logging
@@ -741,25 +740,35 @@ def main() -> int:
     logger = get_logger(__name__)
 
     try:
+        # Default to dry-run mode for testing
+        dry_run = True
+        
         # TODO: Implement proper command-line argument parsing
-        # TODO: Add configuration file loading and validation
-        # TODO: Add interactive configuration prompts
-        # TODO: Add drive selection with Windows detection
-        # For now, create a basic configuration for testing
-        from helpers.models import NetworkConfig, SystemConfig
+        # For production, add: dry_run = "--dry-run" in sys.argv
+        
+        print("🧪 TESTING MODE: Dry-run enabled by default")
+        print("=" * 60)
 
-        network_config = NetworkConfig(network_type="dhcp")
-        config = SystemConfig(
-            target_drive="/dev/nvme0n1",
-            locale="en_US.UTF-8",
-            timezone="UTC",
-            username="user",
-            hostname="slit-system",
-            network=network_config,
-        )
+        # Initialize configuration manager
+        from helpers.config import ConfigurationManager
+        config_manager = ConfigurationManager(dry_run=dry_run)
 
-        # Test with dry-run mode
-        installer = SlitInstaller(config, dry_run=True)
+        # Get configuration (check for test config first, then interactive or from file)
+        try:
+            # For testing, check if test config exists
+            if os.path.exists("test_install.conf"):
+                print("📁 Found test_install.conf - using test configuration")
+                config = config_manager.get_configuration("test_install.conf", non_interactive=True)
+            else:
+                print("🔧 No test config found - starting interactive configuration")
+                config = config_manager.get_configuration()
+        except Exception as e:
+            logger.error(f"Configuration failed: {e}")
+            print(f"✗ Configuration error: {e}")
+            return 1
+
+        # Create installer with configuration
+        installer = SlitInstaller(config, dry_run=dry_run)
 
         if installer.install():
             print("\nInstaller scaffold test completed successfully!")

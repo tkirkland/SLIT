@@ -157,6 +157,7 @@ class SystemConfig:
         target_drive: Selected drive path
         locale: System locale
         timezone: System timezone
+        user_fullname: User's full name (GECOS field)
         username: Primary user account name
         hostname: System hostname
         swap_size: Swap size or "auto"
@@ -169,6 +170,7 @@ class SystemConfig:
     target_drive: str = ""
     locale: str = "en_US.UTF-8"
     timezone: str = "America/New_York"
+    user_fullname: str = ""
     username: str = ""
     hostname: str = ""
     swap_size: str = "auto"
@@ -202,6 +204,16 @@ class SystemConfig:
                     "target_drive",
                     self.target_drive,
                     "Path starting with /dev/",
+                )
+            )
+
+        if not self.user_fullname:
+            errors.append(
+                ValidationError(
+                    "User full name is required",
+                    "user_fullname",
+                    self.user_fullname,
+                    "User's full name",
                 )
             )
 
@@ -265,6 +277,7 @@ class SystemConfig:
             "target_drive": self.target_drive,
             "locale": self.locale,
             "timezone": self.timezone,
+            "user_fullname": self.user_fullname,
             "username": self.username,
             "hostname": self.hostname,
             "swap_size": self.swap_size,
@@ -309,6 +322,7 @@ class SystemConfig:
             target_drive=data.get("target_drive", ""),
             locale=data.get("locale", "en_US.UTF-8"),
             timezone=data.get("timezone", "America/New_York"),
+            user_fullname=data.get("user_fullname", ""),
             username=data.get("username", ""),
             hostname=data.get("hostname", ""),
             swap_size=data.get("swap_size", "auto"),

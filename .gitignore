@@ -106,3 +106,10 @@ dmypy.json
 cython_debug/
 /kde_neon_installer.sh
 /logs/
+/run_interactive_test.py
+/test_config.py
+/test_hardware.py
+/test_input.py
+/test_install.conf
+/test_interactive_drives.py
+/test_user_prompts.py
