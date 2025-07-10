@@ -18,6 +18,30 @@ These files contain critical information about:
 - Function signatures and implementation requirements
 - TODO items and future development priorities
 
+## Session Initialization
+
+**CONTEXT LOADING**: When requested to load project context, read these files to establish full understanding:
+
+1. **Use Read tool on these files in order:**
+   - `README.md` - Project overview and current status
+   - `STYLE.md` - Code formatting and style requirements  
+   - `FUNCTION_REFERENCE.md` - Existing functions and usage patterns
+   - `UTILITY_FUNCTIONS.md` - Implementation specifications
+   - `requirements.txt` - Python dependencies
+   - `SYSTEM_REQUIREMENTS.md` - System package requirements
+
+2. **Check current project state:**
+   - Run `git status` to understand current working state
+   - Check `logs/` directory for recent installation logs
+   - Review any TODO comments in `installer.py` and `helpers/` modules
+
+3. **Establish development context:**
+   - Understand current Python implementation status vs shell script reference
+   - Identify immediate priorities from TODO items
+   - Note any recent changes or development focus areas
+
+This context loading ensures full project familiarity without rediscovering information through conversation.
+
 ## Project Overview
 
 This is the **SLIT (Secure Linux Installation Tool)** project - a comprehensive automated installer system with advanced safety features, configuration management, and dual-boot protection. The project includes both shell script and Python implementations.
@@ -294,6 +318,10 @@ All validation errors are collected and presented together, allowing users to se
 
 ### DNS Settings Application
 DNS search domains and suffixes are applied to both DHCP and static network configurations using systemd-networkd `Domains=` entries.
+
+## Recent Implementation Notes
+
+- We are not updating the shell installer script. Its presence is to act as a guide to the flow that the python installer should follow as it works 100%, but with no zfs support
 
 ---
 

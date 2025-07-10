@@ -1,0 +1,24 @@
+# SLIT Installer - Python Dependencies
+# 
+# This project uses only Python standard library modules.
+# No external Python packages are required for core functionality.
+#
+# The installer is designed to be self-contained and portable,
+# using only Python's robust standard library for maximum
+# compatibility and security in system installation scenarios.
+
+# Development dependencies (optional - also defined in pyproject.toml)
+# Uncomment if setting up development environment:
+# black>=25.1.0
+
+# System Requirements:
+# - Python >= 3.8
+# - Linux system with apt package manager
+# - Root/sudo privileges for system installation
+# - UEFI-capable system for target installation
+#
+# System packages installed during runtime:
+# - parted, gdisk, dosfstools, e2fsprogs, zfsutils-linux
+# - grub-efi-amd64, grub-pc-bin, efibootmgr
+# - util-linux, coreutils, iputils-ping
+# - systemd, locales, tzdata

@@ -172,7 +172,7 @@ class SystemPreparationPhase(InstallationPhase):
         """Install required system packages."""
         self.logger.info("Installing required packages")
 
-        packages = ["parted", "gdisk", "dosfstools", "e2fsprogs"]
+        packages = ["parted", "gdisk", "dosfstools", "e2fsprogs", "zfsutils-linux"]
 
         if self.dry_run:
             print(f"  [DRY-RUN] Would install packages: {', '.join(packages)}")
